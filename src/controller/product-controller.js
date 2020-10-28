@@ -4,7 +4,48 @@ const mongoose = require('mongoose');
 const Product = mongoose.model('Product');
 
 exports.get = (req, res, next) => {
-    res.status(200).send('list of products...');
+    Product.find({active: true}, 'title slug price').
+    then( x => {
+        res.status(200).send(x);
+    }).catch(e => {
+        res.status(400).send({ data: e });
+    });
+}
+
+exports.getById = (req, res, next) => {
+    Product.findById(req.params.id)
+    .then( x => {
+        res.status(200).send(x);
+    })
+    .catch( e => {
+        res.status(400).send(e);
+    });
+};
+
+exports.getBySlug = (req, res, next) => {
+    Product.findOne({
+            slug: req.params.slug,
+            active: true
+        }, 'title slug price tags')
+        .then(x => {
+            res.status(200).send(x);
+        })
+        .catch(e => {
+            res.status(400).send(e);
+        });    
+}
+
+exports.getByTag = (req, res, next) => {
+    console.log(req.params.tag);
+    Product.find({
+        tag: req.params.tag,
+        active: true}, 
+        'title description slug price').
+    then( x => {
+        res.status(200).send(x);
+    }).catch(e => {
+        res.status(400).send({ data: e });
+    });
 }
 
 exports.post = (req, res, next) => {

@@ -4,12 +4,18 @@ const express = require('express');
 const router = express.Router();
 const controller = require('../controller/product-controller')
 
-const get = router.get('/', controller.get);
+router.get('/', controller.get);
 
-const create = router.post('/', controller.post);
+router.get('/admin/:id', controller.getById);
 
-const update = router.put('/:id', controller.put);
+router.get('/:slug', controller.getBySlug);
 
-const del = router.delete('/:id', controller.delete);
+router.get('/tags/:tag', controller.getByTag);
+
+router.post('/', controller.post);
+
+router.put('/:id', controller.put);
+
+router.delete('/:id', controller.delete);
 
 module.exports = router;
