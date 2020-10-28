@@ -1,11 +1,29 @@
 'use strict'
 
+const mongoose = require('mongoose');
+const Product = mongoose.model('Product');
+
 exports.get = (req, res, next) => {
     res.status(200).send('list of products...');
 }
 
 exports.post = (req, res, next) => {
-    res.status(201).send(req.body);
+    var product = new Product(req.body);
+    product
+        .save()
+        .then(x => {
+            res.status(201).send({
+                message: 'Produto cadastraado com sucesso!',
+                data: product
+            });
+        })
+        .catch(e => {
+            res.status(400).send({
+                message: 'Falha ao cadastrar o producto',
+                data: e
+            });
+        });
+    
 };
 
 exports.put = (req, res, next) => {
