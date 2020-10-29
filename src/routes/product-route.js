@@ -6,9 +6,11 @@ const controller = require('../controller/product-controller')
 
 router.get('/', controller.get);
 
-router.get('/admin/:id', controller.getById);
+router.get('/all/details', controller.getAll);
 
-router.get('/:slug', controller.getBySlug);
+router.get('/:id', controller.getById);
+
+router.get('/slug/:slug', controller.getBySlug);
 
 router.get('/tags/:tag', controller.getByTag);
 

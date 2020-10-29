@@ -12,6 +12,14 @@ exports.get = (req, res, next) => {
     });
 }
 
+exports.getAll = (req, res, next) => {
+    Product.find().then( data => {
+        res.status(200).send(data);
+    }).catch(e => {
+        res.status(400).send(e);
+    });
+}
+
 exports.getById = (req, res, next) => {
     Product.findById(req.params.id)
     .then( x => {
@@ -27,8 +35,8 @@ exports.getBySlug = (req, res, next) => {
             slug: req.params.slug,
             active: true
         }, 'title slug price tags')
-        .then(x => {
-            res.status(200).send(x);
+        .then(data => {
+            res.status(200).send(data);
         })
         .catch(e => {
             res.status(400).send(e);
@@ -37,14 +45,16 @@ exports.getBySlug = (req, res, next) => {
 
 exports.getByTag = (req, res, next) => {
     console.log(req.params.tag);
-    Product.find({
-        tag: req.params.tag,
+    Product
+    .find({
+        tags: req.params.tag,
         active: true}, 
-        'title description slug price').
-    then( x => {
-        res.status(200).send(x);
+        'title description slug price')
+    .then( data => {
+        console.log(data);
+        res.status(200).send(data);
     }).catch(e => {
-        res.status(400).send({ data: e });
+        res.status(400).send(e);
     });
 }
 
@@ -68,15 +78,41 @@ exports.post = (req, res, next) => {
 };
 
 exports.put = (req, res, next) => {
-    const id = req.params.id;
-    res.status(200).send({
-        id: id,
-        item: req.body
-    });
+   Product.findByIdAndUpdate(
+       req.params.id,
+       {
+           $set: {
+               title: req.body.title,
+               description: req.body.description,
+               price: req.body.price,
+               tags: req.body.tags
+           }
+       })
+       .then( x => {
+           res.status(200).send({
+               message: 'Produto actualizado com sucesso!',
+               data: x
+           });
+       })
+       .catch( e => {
+       res.status(400).send({
+          message: "Falha ao actualizar produto",
+          data: e
+       });
+   });
 };
 
 exports.delete = (req, res, next) => {
-    const id = req.params.id;
-    console.log('delentado sobre o id: ' + id);
-    res.status(204).send();
-};
+    Product
+        .findOneAndRemove( req.params.id)
+        .then( x => {
+            res.status(204).send({
+                message: 'Produto removido com sucesso!'
+            });
+        })
+        .catch( e => {
+        res.status(400).send({
+           message: "Falha ao removido produto"
+        });
+    });
+ };
